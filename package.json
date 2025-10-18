@@ -1,10 +1,14 @@
 {
     "name": "@roxxel/config-ui",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Lightweight library for building and embedding configuration UIs in Hono",
     "license": "MIT",
     "author": "roxxel",
     "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/roxxel/config-ui.git"
+    },
     "exports": {
         ".": {
             "types": "./dist/index.d.cts",
