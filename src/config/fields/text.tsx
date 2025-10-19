@@ -27,9 +27,15 @@ export const TextFieldHtml = ({ field, context }: FieldProps<TextField>) => {
         name={field.name}
         type={field.isPassword ? "password" : "text"}
         required={field.required}
-        value={context.getFieldValue(field.name) || ""}
+        value={
+          field.isTextArea === false
+            ? context.getFieldValue(field.name) || ""
+            : undefined
+        }
         placeholder={field.placeholder || ""}
-      />
+      >
+        {field.isTextArea ? context.getFieldValue(field.name) : undefined}
+      </Comp>
       <p class="label">
         <FieldError message={context.getFieldError(field.name)} />
       </p>
