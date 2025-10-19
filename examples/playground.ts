@@ -28,7 +28,10 @@ app.route(
         html: html`<div class="p-6">
           <h1 class="text-2xl font-bold mb-4">Welcome to Config UI</h1>
           <p>This is the home page of the configuration interface.</p>
-          <p class="mt-2">Use <a class="link" href="/configui/status">Status</a> to see a dynamic page.</p>
+          <p class="mt-2">
+            Use <a class="link" href="/configui/status">Status</a> to see a
+            dynamic page.
+          </p>
         </div>`,
         path: "/",
       },
@@ -38,7 +41,10 @@ app.route(
         html: Promise.resolve(
           html`<div class="p-6">
             <h1 class="text-2xl font-bold mb-4">About</h1>
-            <p>This example shows how pages can be static, async, or promise-based.</p>
+            <p>
+              This example shows how pages can be static, async, or
+              promise-based.
+            </p>
           </div>`
         ),
         path: "about",
@@ -54,12 +60,16 @@ app.route(
             name: "apiKey",
             label: "API Key",
             placeholder: "Enter your API key",
+            required: true,
           },
           {
             type: "ui",
             name: "customUI",
             html: html`<div role="alert" class="alert alert-info alert-soft">
-              <span>Example notice: this UI block is rendered from the config.</span>
+              <span
+                >Example notice: this UI block is rendered from the
+                config.</span
+              >
             </div>`,
           },
           {
@@ -73,6 +83,7 @@ app.route(
                 label: "Application Name",
                 placeholder: "My App",
                 className: "w-full",
+                required: true,
               },
               {
                 type: "text",
@@ -81,6 +92,7 @@ app.route(
                 placeholder: "Enter admin password",
                 className: "w-full",
                 isPassword: true,
+                required: true,
               },
             ],
           },
@@ -89,6 +101,15 @@ app.route(
             name: "defaultPort",
             label: "Default Port",
             placeholder: "8080",
+            required: true,
+          },
+          {
+            type: "text",
+            name: "description",
+            label: "Application Description",
+            placeholder: "Describe your application",
+            isTextArea: true,
+            className: "w-full",
           },
           {
             type: "array",
@@ -104,12 +125,21 @@ app.route(
                     name: "url",
                     label: "Webhook URL",
                     placeholder: "https://example.com/webhook",
+                    required: true,
                   },
                   {
                     type: "text",
                     name: "method",
                     label: "HTTP Method",
                     placeholder: "POST",
+                    required: true,
+                  },
+                  {
+                    type: "checkbox",
+                    name: "enabled",
+                    label: "Enabled",
+                    labelPlacement: "top",
+                    required: true,
                   },
                 ],
               },

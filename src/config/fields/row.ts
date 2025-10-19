@@ -7,6 +7,7 @@ export type RowField = BaseField & {
   type: "row";
   fields: Field[];
   className?: string;
+
 };
 
 export const RowFieldHtml = ({ field, context }: FieldProps<RowField>) => {
@@ -14,7 +15,7 @@ export const RowFieldHtml = ({ field, context }: FieldProps<RowField>) => {
     throw new Error("Nested row fields are not supported.");
   }
   return html`
-    <div class="${cn("flex gap-4", field.className)}">
+    <div class="${cn("flex gap-4 items-top", field.className)}">
       ${field.fields.map((f) =>
         renderField({
           field: f,

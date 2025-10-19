@@ -3,7 +3,7 @@ import { trimTrailingSlash } from "hono/trailing-slash";
 import { renderer } from "./renderer";
 import { ConfigForm } from "./components/config-form";
 import { parseArrayFieldName } from "./utils/parse-array-field-name";
-import type { ConfigContext } from "./config/fields";
+import type { BaseField, ConfigContext, Field } from "./config/fields";
 import type { ConfigUIOptions } from "./types";
 import { renderPage } from "./utils/render-page";
 
@@ -88,29 +88,78 @@ export const ConfigUI = (opts: ConfigUIOptions) => {
         return c.text("Config not found", 404);
       }
       const formData = await c.req.formData();
-      const formFields = Object.fromEntries(formData.entries());
-      const fields: Record<string, any> = {};
-      Object.entries(formFields).forEach(([key, value]) => {
-        const parsed = parseArrayFieldName(key);
-        if (parsed) {
-          const { baseName, index, fieldName } = parsed;
-          if (index === -1) return;
-          fields[baseName] = fields[baseName] || [];
-          fields[baseName][index] = {
-            ...(fields[baseName][index] || {}),
-            [fieldName]: value,
-          };
-        } else {
-          fields[key] = value;
+      const sanitizedFields = config.fields
+        .map((field) => {
+          if (field.type === "array") {
+            const arrayFields: Field[] = [];
+            field.fields.forEach((f) => {
+              // Unwrap row fields since rows are just for layout
+              if (f.type === "row") {
+                arrayFields.push(...f.fields);
+              } else {
+                arrayFields.push(f);
+              }
+            });
+            return { ...field, fields: arrayFields };
+          }
+          if (field.type === "row") {
+            // Same here, unwrap row fields
+            return field.fields;
+          }
+          return field;
+        })
+        .flatMap((f) => f)
+        .filter((x) => x.type !== "ui");
+
+      const defaultValues: Record<Field["type"], any> = {
+        text: null,
+        ui: null,
+        number: null,
+        checkbox: false,
+        array: [],
+        row: null,
+      };
+
+      const fieldData = sanitizedFields.map((field) => {
+        if (field.type === "array") {
+          let length = Number(formData.get(`${field.name}[0][__length]`)) || 0;
+          let data: any[] = [];
+          for (let index = 0; index < length; index++) {
+            let itemData: Record<string, any> = {};
+            for (const f of field.fields) {
+              const key = `${field.name}[${index}][${f.name}]`;
+              const value = formData.get(key);
+              //TODO: proper validation
+              if (f.required && value === null) {
+                itemData[f.name] = defaultValues[f.type];
+              } else if (value !== null) {
+                itemData[f.name] = value;
+              } else {
+                itemData[f.name] = null;
+              }
+            }
+            data.push(itemData);
+          }
+          return { key: field.name, value: data };
         }
-      });
-      Object.keys(fields).forEach((key) => {
-        if (Array.isArray(fields[key])) {
-          fields[key] = fields[key].filter((item) => !!item);
+        const value = formData.get(field.name);
+        if (field.required && value === null) {
+          return { key: field.name, value: defaultValues[field.type] };
+        } else if (value !== null) {
+          return { key: field.name, value };
+        } else {
+          return { key: field.name, value: null };
         }
       });
 
-      await opts.dbAdapter.saveFields(slug, fields as Record<string, any>);
+      const fieldDataObj: Record<string, any> = Object.fromEntries(
+        fieldData.map((fd) => [fd.key, fd.value])
+      );
+
+      await opts.dbAdapter.saveFields(
+        slug,
+        fieldDataObj as Record<string, any>
+      );
 
       const savedFields = await opts.dbAdapter.readConfigFieldsBySlug(slug);
       const context: ConfigContext = {

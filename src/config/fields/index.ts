@@ -1,4 +1,6 @@
+import type { required } from "zod/mini";
 import { ArrayFieldHtml, type ArrayField } from "./array";
+import { CheckboxFieldHtml, type CheckboxField } from "./checkbox";
 import { NumberFieldHtml, type NumberField } from "./number";
 import { RowFieldHtml, type RowField } from "./row";
 import { TextFieldHtml, type TextField } from "./text";
@@ -8,9 +10,10 @@ export type BaseField = {
   name: string;
   label?: string;
   className?: string;
+  required?: boolean;
 };
 
-export type Field = TextField | UIField | RowField | NumberField | ArrayField;
+export type Field = TextField | UIField | RowField | NumberField | ArrayField | CheckboxField;
 
 export const fieldMap: Record<Field["type"], any> = {
   text: TextFieldHtml,
@@ -18,6 +21,7 @@ export const fieldMap: Record<Field["type"], any> = {
   row: RowFieldHtml,
   number: NumberFieldHtml,
   array: ArrayFieldHtml,
+  checkbox: CheckboxFieldHtml,
 };
 
 export type ConfigContext = {

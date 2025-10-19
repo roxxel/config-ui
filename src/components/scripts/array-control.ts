@@ -9,21 +9,26 @@ export const ArrayControlScript = () => {
           'fieldset[data-field-name="' + fieldName + '"]'
         );
         const template = fieldset.querySelector("[data-array-field-template]");
-        const newItem = template.firstElementChild.cloneNode(true);
-        // Update names with correct index
+        const html = template.textContent;
+        const newItem = document
+          .createRange()
+          .createContextualFragment(html).firstElementChild;
         const items = fieldset.querySelectorAll("div[data-array-item]");
         const emptyMessage = fieldset.querySelector("[data-array-empty]");
         emptyMessage.classList.add("hidden");
-        const newIndex = Math.max(items.length - 1, 0);
+        const newIndex = Math.max(items.length, 0);
         newItem.querySelectorAll("[name]").forEach((input) => {
           const name = input.getAttribute("name");
-          console.log("Old name:", name);
           const newName = name.replace("-1", newIndex);
-          console.log("New name:", newName);
           input.setAttribute("name", newName);
+          input.setAttribute("data-field-name", newName);
         });
         newItem.setAttribute("data-array-item", "");
         fieldset.appendChild(newItem);
+        const lengthInput = fieldset.querySelector("[data-array-length]");
+        if (lengthInput) {
+          lengthInput.value = items.length + 1;
+        }
       }
 
       function removeButtonEventListener(button) {
@@ -33,12 +38,15 @@ export const ArrayControlScript = () => {
         );
         const items = fieldset.querySelectorAll("div[data-array-item]");
         const emptyMessage = fieldset.querySelector("[data-array-empty]");
-        console.log(items);
-        if (items.length - 2 === 0) {
+        if (items.length - 1 === 0) {
           emptyMessage.classList.remove("hidden");
         }
         const item = button.closest("div[data-array-item]");
         fieldset.removeChild(item);
+        const lengthInput = fieldset.querySelector("[data-array-length]");
+        if (lengthInput) {
+          lengthInput.value = items.length - 1;
+        }
       }
     </script>
   `;

@@ -24,6 +24,7 @@ export const ArrayFieldHtml = ({ field, context }: FieldProps<ArrayField>) => {
             return renderField({
               field: {
                 ...f,
+                required: false,
                 fields: f.fields.map((rf) => ({
                   ...rf,
                   name: `${field.name}[${index}][${rf.name}]`,
@@ -60,7 +61,7 @@ export const ArrayFieldHtml = ({ field, context }: FieldProps<ArrayField>) => {
       class={cn("fieldset", field.className)}
     >
       <div class="hidden" data-array-field-template>
-        {renderItem({}, -1)}
+        {renderItem({}, -1).toString()}
       </div>
       <legend class="fieldset-legend">
         {field.label || field.name}
@@ -75,6 +76,12 @@ export const ArrayFieldHtml = ({ field, context }: FieldProps<ArrayField>) => {
         </button>
       </legend>
 
+      <input
+        type="hidden"
+        data-array-length
+        name={`${field.name}[0][__length]`}
+        value={Array.isArray(value) ? value.length : 0}
+      />
       <p
         class={cn(
           "label",
