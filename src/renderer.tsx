@@ -1,4 +1,4 @@
-import { html } from "hono/html";
+import { html, raw } from "hono/html";
 import { jsxRenderer } from "hono/jsx-renderer";
 import { PasswordRevealScript } from "./components/scripts/password-reveal";
 import { ArrayControlScript } from "./components/scripts/array-control";
@@ -61,6 +61,7 @@ export const renderer = (props: ConfigUIOptions) =>
             }
             ${props.customCss}
           `}</style>
+          {props.head && raw(props.head)}
         </head>
         <body>
           <ul class="menu bg-base-200 fixed h-screen rounded-r-box w-56 flex flex-col">

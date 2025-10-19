@@ -6,6 +6,7 @@ export type ConfigUIOptions = {
   prefix?: string;
   title?: string;
   daisyUITheme?: string;
+  head?: string;
   configs?: ConfigSchema[];
   dbAdapter: DbAdapter;
   customCss?: string;

@@ -9,6 +9,7 @@ app.route(
   ConfigUI({
     prefix: "/configui",
     dbAdapter: new FileDbAdapter("./examples/data"),
+    head: `<meta name="description" content="Example Config UI Application" />`,
     pages: [
       {
         title: "Status",
@@ -119,6 +120,7 @@ app.route(
               {
                 type: "row",
                 name: "webhookItem",
+                className: "gap-4",
                 fields: [
                   {
                     type: "text",
@@ -126,6 +128,7 @@ app.route(
                     label: "Webhook URL",
                     placeholder: "https://example.com/webhook",
                     required: true,
+                    className: "w-full",
                   },
                   {
                     type: "text",
